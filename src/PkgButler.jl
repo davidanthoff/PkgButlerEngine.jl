@@ -8,7 +8,7 @@ function update_pkg(path::AbstractString)
 
     cp(joinpath(@__DIR__, "..", "templates", "butler-workflow.yml"), path_for_main_butler_workflow, force=true)
 
-    cp(joinpath(@__DIR__, "..", "sillytestfile.md"), joinpath(path, "sillytestfile.md"))
+    cp(joinpath(@__DIR__, "..", "templates", "sillytestfile.md"), joinpath(path, "sillytestfile.md"))
 end
 
 end # module
