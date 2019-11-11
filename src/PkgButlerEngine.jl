@@ -12,11 +12,6 @@ function update_pkg(path::AbstractString)
     cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-butler-workflow.yml"), path_for_main_butler_workflow, force=true)
     cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-ci-master-workflow.yml"), path_for_ci_master_workflow, force=true)
     cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-ci-pr-workflow.yml"), path_for_ci_pr_workflow, force=true)
-
-    path_for_old_ci_workflow = joinpath(path_for_butler_workflows_folder, "jlpkgbutler-ci-workflow.yml")
-    if isfile(path_for_old_ci_workflow)
-        rm(path_for_old_ci_workflow)
-    end
 end
 
 end # module
