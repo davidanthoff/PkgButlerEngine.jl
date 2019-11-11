@@ -1,6 +1,6 @@
 name = "PkgButlerEngine"
 uuid = "5c9c0fc8-7103-448b-bb0a-c427020e3b0b"
-version = "0.1.0"
+version = "0.1.1-DEV"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
