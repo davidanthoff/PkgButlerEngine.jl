@@ -9,7 +9,7 @@ on:
 
 jobs:
   butler:
-    name: "Run PkgButler.jl"
+    name: "Run Package Butler"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1.0.0

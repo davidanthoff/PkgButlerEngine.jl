@@ -1,4 +1,4 @@
-module PkgButler
+module PkgButlerEngine
 
 function update_pkg(path::AbstractString)
     path_for_butler_workflows_folder = joinpath(path, ".github", "workflows")
