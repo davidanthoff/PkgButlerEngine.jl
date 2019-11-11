@@ -1,4 +1,9 @@
 name = "PkgButlerEngine"
 uuid = "5c9c0fc8-7103-448b-bb0a-c427020e3b0b"
-authors = ["David Anthoff <anthoff@berkeley.edu>"]
 version = "0.1.0"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
