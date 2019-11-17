@@ -1,6 +1,6 @@
 name = "PkgButlerEngine"
 uuid = "5c9c0fc8-7103-448b-bb0a-c427020e3b0b"
-version = "1.0.1-DEV"
+version = "1.0.1"
 
 [compat]
 julia = "1"
