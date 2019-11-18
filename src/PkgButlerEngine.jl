@@ -58,6 +58,34 @@ function ensure_project_has_julia_compat(path)
     end
 end
 
+function ensure_project_uses_new_enough_documenter(path)
+    doc_proj_file = isfile(joinpath(path, "docs", "JuliaProject.toml")) ? joinpath(path, "docs", "JuliaProject.toml") : joinpath(path, "docs", "Project.toml")
+
+    if isfile(doc_proj_file)
+        pkg_toml_content = Pkg.TOML.parsefile(doc_proj_file)
+
+        if haskey(pkg_toml_content, "compat") && haskey(pkg_toml_content["compat"], "Documenter")
+            documenter_compat_bound = pkg_toml_content["compat"]["Documenter"]
+            version_bound = Pkg.Types.semver_spec(documenter_compat_bound)
+
+            # This is the list of versions that don't work
+            invalid_versions = Pkg.Types.semver_spec("0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.10,0.11,0.12,0.13,0.14,0.15,0.16,0.17,0.18,0.19,0.20,0.21,0.22,0.23")
+
+            if !isempty(intersect(invalid_versions, version_bound))
+                # TODO This is a bit crude. Ideally we would try to see whether a version >= 0.24 is listed in the compat section, and if so,
+                # only remove the offending versions.
+                pkg_toml_content["compat"]["Documenter"] = "~0.24"
+
+                open(doc_proj_file, "w") do f
+                    Pkg.TOML.print(f, pkg_toml_content)
+                end
+        
+            end
+        end
+
+    end
+end
+
 function construct_version_matrix(path)
     proj_file = isfile(joinpath(path, "JuliaProject.toml")) ? joinpath(path, "JuliaProject.toml") : joinpath(path, "Project.toml")
 
