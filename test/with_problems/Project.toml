@@ -1,0 +1,12 @@
+name = "TestProject"
+uuid = "5e89a919-da48-49be-a22a-bd9429444be6"
+version = "1.0.3-DEV"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
