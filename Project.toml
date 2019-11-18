@@ -1,6 +1,6 @@
 name = "PkgButlerEngine"
 uuid = "5c9c0fc8-7103-448b-bb0a-c427020e3b0b"
-version = "1.0.2"
+version = "1.0.3-DEV"
 
 [deps]
 Mustache = "ffc61752-8dc7-55ee-8c37-f3e9cdd09e70"
