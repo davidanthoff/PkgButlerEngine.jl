@@ -1,5 +1,8 @@
 module PkgButlerEngine
 
+import Mustache
+import Pkg
+
 function configure_pkg(path::AbstractString; channel=:auto)
     channel in (:auto, :stable, :dev) || error("Invalid value for channel.")
 
@@ -29,11 +32,53 @@ function configure_pkg(path::AbstractString; channel=:auto)
     end
 end
 
+function cp_with_mustache(src, dest, vals)
+    content = read(src, String)
+
+    open(dest, "w") do file
+        Mustache.render(file, content, vals, tags= ("\$[[", "]]"))
+    end
+end
+
+function ensure_project_has_julia_compat(path)
+    proj_file = isfile(joinpath(path, "JuliaProject.toml")) ? joinpath(path, "JuliaProject.toml") : joinpath(path, "Project.toml")
+
+    pkg_toml_content = Pkg.TOML.parsefile(proj_file)
+
+    if !haskey(pkg_toml_content, "compat")
+        pkg_toml_content["compat"] = Dict{String,String}()
+    end
+
+    if !haskey(pkg_toml_content["compat"], "julia")
+        pkg_toml_content["compat"]["julia"] = "1"
+
+        open(proj_file, "w") do f
+            Pkg.TOML.print(f, pkg_toml_content)
+        end
+    end
+end
+
+function construct_version_matrix(path)
+    proj_file = isfile(joinpath(path, "JuliaProject.toml")) ? joinpath(path, "JuliaProject.toml") : joinpath(path, "Project.toml")
+
+    pkg_toml_content = Pkg.TOML.parsefile(proj_file)
+
+    julia_compat_bound = pkg_toml_content["compat"]["julia"]
+
+    version_spec = Pkg.Types.semver_spec(julia_compat_bound)
+
+    versions = [v"1.0.5", v"1.1.1", v"1.2.0"]
+
+    compat_versions = filter(i->i in version_spec, versions)
+
+    return join(string.(compat_versions), ", ")
+end
+
 function update_pkg(path::AbstractString)
+    configure_pkg(path)
+
     path_for_butler_workflows_folder = joinpath(path, ".github", "workflows")
 
-    path_for_main_butler_workflow = joinpath(path_for_butler_workflows_folder, "jlpkgbutler-butler-workflow.yml")
-    path_for_main_butler_dev_workflow = joinpath(path_for_butler_workflows_folder, "jlpkgbutler-butler-dev-workflow.yml")
     path_for_ci_master_workflow = joinpath(path_for_butler_workflows_folder, "jlpkgbutler-ci-master-workflow.yml")
     path_for_ci_pr_workflow = joinpath(path_for_butler_workflows_folder, "jlpkgbutler-ci-pr-workflow.yml")
     path_for_docdeploy_workflow = joinpath(path_for_butler_workflows_folder, "jlpkgbutler-docdeploy-workflow.yml")
@@ -42,24 +87,13 @@ function update_pkg(path::AbstractString)
 
     mkpath(path_for_butler_workflows_folder)
 
-    channel = isfile(path_for_main_butler_dev_workflow) ? :dev : :stable
+    ensure_project_has_julia_compat(path)
 
-    if channel==:stable
-        if isfile(path_for_main_butler_dev_workflow)
-            rm(path_for_main_butler_dev_workflow, force=true)
-        end
+    view_vals = Dict{String, Any}()
+    view_vals["JL_VERSION_MATRIX"] = construct_version_matrix(path)
 
-        cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-butler-workflow.yml"), path_for_main_butler_workflow, force=true)
-    elseif channel==:dev
-        if isfile(path_for_main_butler_workflow)
-            rm(path_for_main_butler_workflow, force=true)
-        end
-
-        cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-butler-dev-workflow.yml"), path_for_main_butler_dev_workflow, force=true)
-    end
-
-    cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-ci-master-workflow.yml"), path_for_ci_master_workflow, force=true)
-    cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-ci-pr-workflow.yml"), path_for_ci_pr_workflow, force=true)
+    cp_with_mustache(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-ci-master-workflow.yml"), path_for_ci_master_workflow, view_vals)
+    cp_with_mustache(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-ci-pr-workflow.yml"), path_for_ci_pr_workflow, view_vals)
 
     if isfile(path_for_docs_make_file)
         cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-docdeploy-workflow.yml"), path_for_docdeploy_workflow, force=true)
