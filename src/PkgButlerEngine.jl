@@ -128,6 +128,8 @@ function update_pkg(path::AbstractString)
     else isfile(path_for_docdeploy_workflow)
         rm(path_for_docdeploy_workflow, force=true)
     end
+
+    ensure_project_uses_new_enough_documenter(path)
 end
 
 end # module
