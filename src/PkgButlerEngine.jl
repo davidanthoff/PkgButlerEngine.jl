@@ -138,7 +138,7 @@ function update_pkg(path::AbstractString)
 
     ensure_project_uses_new_enough_documenter(path)
 
-    add_compathelper()
+    add_compathelper(path)
 end
 
 end # module
