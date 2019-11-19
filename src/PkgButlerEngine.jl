@@ -106,7 +106,7 @@ function add_compathelper(path)
     path_for_butler_workflows_folder = joinpath(path, ".github", "workflows")
     path_for_compathelper_workflow = joinpath(path_for_butler_workflows_folder, "jlpkgbutler-compathelper-workflow.yml")
 
-    cp(joinpath(@__DIR__, "..", "jlpkgbutler-compathelper-workflow.yml"), path_for_compathelper_workflow, force=true)
+    cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-compathelper-workflow.yml"), path_for_compathelper_workflow, force=true)
 end
 
 function update_pkg(path::AbstractString)
