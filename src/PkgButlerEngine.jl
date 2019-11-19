@@ -102,6 +102,13 @@ function construct_version_matrix(path)
     return join(string.(compat_versions), ", ")
 end
 
+function add_compathelper(path)
+    path_for_butler_workflows_folder = joinpath(path, ".github", "workflows")
+    path_for_compathelper_workflow = joinpath(path_for_butler_workflows_folder, "jlpkgbutler-compathelper-workflow.yml")
+
+    cp(joinpath(@__DIR__, "..", "jlpkgbutler-compathelper-workflow.yml"), path_for_compathelper_workflow, force=true)
+end
+
 function update_pkg(path::AbstractString)
     configure_pkg(path)
 
@@ -130,6 +137,8 @@ function update_pkg(path::AbstractString)
     end
 
     ensure_project_uses_new_enough_documenter(path)
+
+    add_compathelper()
 end
 
 end # module
