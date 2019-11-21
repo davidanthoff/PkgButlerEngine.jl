@@ -79,7 +79,7 @@ function ensure_project_uses_new_enough_documenter(path)
                 open(doc_proj_file, "w") do f
                     Pkg.TOML.print(f, pkg_toml_content)
                 end
-        
+
             end
         end
 
@@ -109,8 +109,38 @@ function add_compathelper(path)
     cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-compathelper-workflow.yml"), path_for_compathelper_workflow, force=true)
 end
 
+function detect_template(path)
+    path_for_config_file = joinpath(path, ".jlpkgbutler.toml")
+
+    if isfile(path_for_config_file)
+        config_content = Pkg.TOML.parsefile(path_for_config_file)
+
+        if haskey(config_content, "template")
+            return lowercase(config_content["template"])
+        end
+    end
+
+    return "default"
+end
+
+function update_pkg_bach(path)
+    if isfile(joinpath(path, ".travis.yml"))
+        rm(joinpath(path, ".travis.yml"), force=true)
+    end
+
+    if isfile(joinpath(path, "appveyor.yml"))
+        rm(joinpath(path, "appveyor.yml"), force=true)
+    end
+
+    if isfile(joinpath(path, ".appveyor.yml"))
+        rm(joinpath(path, ".appveyor.yml"), force=true)
+    end
+end
+
 function update_pkg(path::AbstractString)
     configure_pkg(path)
+
+    template = detect_template(path)
 
     path_for_butler_workflows_folder = joinpath(path, ".github", "workflows")
 
@@ -139,6 +169,10 @@ function update_pkg(path::AbstractString)
     ensure_project_uses_new_enough_documenter(path)
 
     add_compathelper(path)
+
+    if template=="bach"
+        update_pkg_bach(path)
+    end
 end
 
 end # module
