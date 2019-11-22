@@ -3,8 +3,9 @@ module PkgButlerEngine
 import Mustache
 import Pkg
 
-function configure_pkg(path::AbstractString; channel=:auto)
+function configure_pkg(path::AbstractString; channel=:auto, template=:auto)
     channel in (:auto, :stable, :dev) || error("Invalid value for channel.")
+    template in (:auto, :default, :bach) || error("Invalid value for template.")
 
     path_for_butler_workflows_folder = joinpath(path, ".github", "workflows")
 
@@ -29,6 +30,35 @@ function configure_pkg(path::AbstractString; channel=:auto)
         end
 
         cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-butler-dev-workflow.yml"), path_for_main_butler_dev_workflow, force=true)
+    end
+
+    path_for_config_file = joinpath(path, ".jlpkgbutler.toml")
+
+    if template!==:auto
+        if isfile(path_for_config_file)
+            config_content = Pkg.TOML.parsefile(path_for_config_file)
+    
+            if haskey(config_content, "template")
+                if template!==:auto
+                    config_content["template"] = string(template)
+
+                    open(path_for_config_file, "w") do f
+                        Pkg.TOML.print(f, config_content)
+                    end    
+                end
+            elseif template!==:default
+                config_content["template"] = string(template)
+
+                open(path_for_config_file, "w") do f
+                    Pkg.TOML.print(f, config_content)
+                end    
+            end
+        elseif template!==:default
+            open(path_for_config_file, "w") do f
+                Pkg.TOML.print(f, Dict{String,Any}("template"=>string(template)))
+            end
+    
+        end    
     end
 end
 
