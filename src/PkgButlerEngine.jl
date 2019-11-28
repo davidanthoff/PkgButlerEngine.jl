@@ -125,11 +125,11 @@ function construct_version_matrix(path)
 
     version_spec = Pkg.Types.semver_spec(julia_compat_bound)
 
-    versions = [v"1.0", v"1.1", v"1.2", v"1.3"]
+    versions = [v"1.0.5"=>"1.0", v"1.1.1"=>"1.1", v"1.2.0"="1.2", v"1.3.0"=>"1.3"]
 
-    compat_versions = filter(i->i in version_spec, versions)
+    compat_versions = filter(i->i[1] in version_spec, versions)
 
-    return join(string.(compat_versions), ", ")
+    return join(map(i->i[2], compat_versions), ", ")
 end
 
 function add_compathelper(path)
