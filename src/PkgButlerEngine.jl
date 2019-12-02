@@ -177,6 +177,7 @@ function update_pkg(path::AbstractString)
     path_for_ci_master_workflow = joinpath(path_for_butler_workflows_folder, "jlpkgbutler-ci-master-workflow.yml")
     path_for_ci_pr_workflow = joinpath(path_for_butler_workflows_folder, "jlpkgbutler-ci-pr-workflow.yml")
     path_for_docdeploy_workflow = joinpath(path_for_butler_workflows_folder, "jlpkgbutler-docdeploy-workflow.yml")
+    path_for_codeformat_workflow = joinpath(path_for_butler_workflows_folder, "jlpkgbutler-codeformat-pr-workflow.yml")
 
     path_for_docs_make_file = joinpath(path, "docs", "make.jl")
 
@@ -186,6 +187,9 @@ function update_pkg(path::AbstractString)
 
     view_vals = Dict{String, Any}()
     view_vals["JL_VERSION_MATRIX"] = construct_version_matrix(path)
+    if tempdir=="bach"
+        view_vals["include_codeformat_lint"] = "true"
+    end
 
     cp_with_mustache(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-ci-master-workflow.yml"), path_for_ci_master_workflow, view_vals)
     cp_with_mustache(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-ci-pr-workflow.yml"), path_for_ci_pr_workflow, view_vals)
@@ -200,8 +204,12 @@ function update_pkg(path::AbstractString)
 
     add_compathelper(path)
 
+    rm(path_for_codeformat_workflow, force=true)
+
     if template=="bach"
         update_pkg_bach(path)
+
+        cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-codeformat-pr-workflow.yml"), path_for_codeformat_workflow, force=true)
     end
 end
 
