@@ -188,7 +188,7 @@ function update_pkg(path::AbstractString)
 
     view_vals = Dict{String, Any}()
     view_vals["JL_VERSION_MATRIX"] = construct_version_matrix(path)
-    if tempdir=="bach"
+    if template=="bach"
         view_vals["include_codeformat_lint"] = "true"
     end
 
