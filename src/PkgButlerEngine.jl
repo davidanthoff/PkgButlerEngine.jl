@@ -204,7 +204,7 @@ function update_pkg(path::AbstractString)
 
     add_compathelper(path)
 
-    rm(path_for_codeformat_workflow, force=true)
+    isfile(path_for_codeformat_workflow) && rm(path_for_codeformat_workflow, force=true)
 
     if template=="bach"
         update_pkg_bach(path)

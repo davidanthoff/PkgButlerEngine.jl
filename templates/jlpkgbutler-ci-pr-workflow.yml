@@ -38,4 +38,4 @@ $[[#include_codeformat_lint]]
       - uses: actions/checkout@v1.0.0
       - uses: julia-actions/setup-julia@latest
       - uses: julia-actions/julia-codeformat-lint@releases/v1
-$[[#include_codeformat_lint]]
+$[[/include_codeformat_lint]]
