@@ -14,3 +14,9 @@ The Julia Package Butler currently makes the following changes to a package repo
 - If a `docs/make.jl` file exists, a GitHub Action workflow that builds and deploys documentation is added to the package.
 - If a `docs/Project.toml` file exists, the butler will ensure that the version bound on Documenter.jl is no lower than 0.24 (the first version to support building documentation with GitHub Actions).
 - Enable [CompatHelper.jl](https://github.com/search?q=CompatHelper.jl&ref=opensearch) for the repository.
+- Enable [TagBot](https://github.com/JuliaRegistries/TagBot) for the repository.
+
+When the `bach` template is used, these additional channges are made:
+- Travis and Appveyor configuration files are removed.
+- Whenever any Julia file on `master` is not properly formatted, a PR with formatting changes is opened (based on https://github.com/julia-vscode/DocumentFormat.jl).
+- Any PR has an additional check whether Julia code files are properly formatted.
