@@ -3,7 +3,7 @@ module PkgButlerEngine
 import Mustache
 import Pkg
 
-function configure_pkg(path::AbstractString; channel=:auto, template=:auto)
+function configure_pkg(path::AbstractString; channel = :auto, template = :auto)
     channel in (:auto, :stable, :dev) || error("Invalid value for channel.")
     template in (:auto, :default, :bach) || error("Invalid value for template.")
 
@@ -14,51 +14,51 @@ function configure_pkg(path::AbstractString; channel=:auto, template=:auto)
 
     mkpath(path_for_butler_workflows_folder)
 
-    if channel==:auto
+    if channel == :auto
         channel = isfile(path_for_main_butler_dev_workflow) ? :dev : :stable
     end
 
-    if channel==:stable
+    if channel == :stable
         if isfile(path_for_main_butler_dev_workflow)
-            rm(path_for_main_butler_dev_workflow, force=true)
+            rm(path_for_main_butler_dev_workflow, force = true)
         end
 
-        cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-butler-workflow.yml"), path_for_main_butler_workflow, force=true)
-    elseif channel==:dev
+        cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-butler-workflow.yml"), path_for_main_butler_workflow, force = true)
+    elseif channel == :dev
         if isfile(path_for_main_butler_workflow)
-            rm(path_for_main_butler_workflow, force=true)
+            rm(path_for_main_butler_workflow, force = true)
         end
 
-        cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-butler-dev-workflow.yml"), path_for_main_butler_dev_workflow, force=true)
+        cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-butler-dev-workflow.yml"), path_for_main_butler_dev_workflow, force = true)
     end
 
     path_for_config_file = joinpath(path, ".jlpkgbutler.toml")
 
-    if template!==:auto
+    if template !== :auto
         if isfile(path_for_config_file)
             config_content = Pkg.TOML.parsefile(path_for_config_file)
-    
+
             if haskey(config_content, "template")
-                if template!==:auto
+                if template !== :auto
                     config_content["template"] = string(template)
 
                     open(path_for_config_file, "w") do f
                         Pkg.TOML.print(f, config_content)
-                    end    
+                    end
                 end
-            elseif template!==:default
+            elseif template !== :default
                 config_content["template"] = string(template)
 
                 open(path_for_config_file, "w") do f
                     Pkg.TOML.print(f, config_content)
-                end    
+                end
             end
-        elseif template!==:default
+        elseif template !== :default
             open(path_for_config_file, "w") do f
-                Pkg.TOML.print(f, Dict{String,Any}("template"=>string(template)))
+                Pkg.TOML.print(f, Dict{String,Any}("template" => string(template)))
             end
-    
-        end    
+
+        end
     end
 end
 
@@ -66,7 +66,7 @@ function cp_with_mustache(src, dest, vals)
     content = read(src, String)
 
     open(dest, "w") do file
-        Mustache.render(file, content, vals, tags= ("\$[[", "]]"))
+        Mustache.render(file, content, vals, tags = ("\$[[", "]]"))
     end
 end
 
@@ -125,7 +125,7 @@ function construct_version_matrix(path)
 
     version_spec = Pkg.Types.semver_spec(julia_compat_bound)
 
-    versions = [v"1.0.5"=>"1.0.5", v"1.1.1"=>"1.1.1", v"1.2.0"=>"1.2.0", v"1.3.0"=>"1.3.0"]
+    versions = [v"1.0.5" => "1.0.5", v"1.1.1" => "1.1.1", v"1.2.0" => "1.2.0", v"1.3.0" => "1.3.0"]
 
     compat_versions = filter(i->i[1] in version_spec, versions)
 
@@ -136,7 +136,7 @@ function add_compathelper(path)
     path_for_butler_workflows_folder = joinpath(path, ".github", "workflows")
     path_for_compathelper_workflow = joinpath(path_for_butler_workflows_folder, "jlpkgbutler-compathelper-workflow.yml")
 
-    cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-compathelper-workflow.yml"), path_for_compathelper_workflow, force=true)
+    cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-compathelper-workflow.yml"), path_for_compathelper_workflow, force = true)
 end
 
 function detect_template(path)
@@ -155,15 +155,15 @@ end
 
 function update_pkg_bach(path)
     if isfile(joinpath(path, ".travis.yml"))
-        rm(joinpath(path, ".travis.yml"), force=true)
+        rm(joinpath(path, ".travis.yml"), force = true)
     end
 
     if isfile(joinpath(path, "appveyor.yml"))
-        rm(joinpath(path, "appveyor.yml"), force=true)
+        rm(joinpath(path, "appveyor.yml"), force = true)
     end
 
     if isfile(joinpath(path, ".appveyor.yml"))
-        rm(joinpath(path, ".appveyor.yml"), force=true)
+        rm(joinpath(path, ".appveyor.yml"), force = true)
     end
 end
 
@@ -186,32 +186,32 @@ function update_pkg(path::AbstractString)
 
     ensure_project_has_julia_compat(path)
 
-    view_vals = Dict{String, Any}()
+    view_vals = Dict{String,Any}()
     view_vals["JL_VERSION_MATRIX"] = construct_version_matrix(path)
-    if template=="bach"
+    if template == "bach"
         view_vals["include_codeformat_lint"] = "true"
     end
 
     cp_with_mustache(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-ci-master-workflow.yml"), path_for_ci_master_workflow, view_vals)
     cp_with_mustache(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-ci-pr-workflow.yml"), path_for_ci_pr_workflow, view_vals)
-    cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-tagbot-workflow.yml"), path_for_tagbot_workflow, force=true)
+    cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-tagbot-workflow.yml"), path_for_tagbot_workflow, force = true)
 
     if isfile(path_for_docs_make_file)
-        cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-docdeploy-workflow.yml"), path_for_docdeploy_workflow, force=true)
+        cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-docdeploy-workflow.yml"), path_for_docdeploy_workflow, force = true)
     else isfile(path_for_docdeploy_workflow)
-        rm(path_for_docdeploy_workflow, force=true)
+        rm(path_for_docdeploy_workflow, force = true)
     end
 
     ensure_project_uses_new_enough_documenter(path)
 
     add_compathelper(path)
 
-    isfile(path_for_codeformat_workflow) && rm(path_for_codeformat_workflow, force=true)
+    isfile(path_for_codeformat_workflow) && rm(path_for_codeformat_workflow, force = true)
 
-    if template=="bach"
+    if template == "bach"
         update_pkg_bach(path)
 
-        cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-codeformat-pr-workflow.yml"), path_for_codeformat_workflow, force=true)
+        cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-codeformat-pr-workflow.yml"), path_for_codeformat_workflow, force = true)
     end
 end
 
