@@ -178,6 +178,7 @@ function update_pkg(path::AbstractString)
     path_for_ci_pr_workflow = joinpath(path_for_butler_workflows_folder, "jlpkgbutler-ci-pr-workflow.yml")
     path_for_docdeploy_workflow = joinpath(path_for_butler_workflows_folder, "jlpkgbutler-docdeploy-workflow.yml")
     path_for_codeformat_workflow = joinpath(path_for_butler_workflows_folder, "jlpkgbutler-codeformat-pr-workflow.yml")
+    path_for_tagbot_workflow = joinpath(path_for_butler_workflows_folder, "jlpkgbutler-tagbot-workflow.yml")
 
     path_for_docs_make_file = joinpath(path, "docs", "make.jl")
 
@@ -193,6 +194,7 @@ function update_pkg(path::AbstractString)
 
     cp_with_mustache(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-ci-master-workflow.yml"), path_for_ci_master_workflow, view_vals)
     cp_with_mustache(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-ci-pr-workflow.yml"), path_for_ci_pr_workflow, view_vals)
+    cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-tagbot-workflow.yml"), path_for_tagbot_workflow, force=true)
 
     if isfile(path_for_docs_make_file)
         cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-docdeploy-workflow.yml"), path_for_docdeploy_workflow, force=true)
