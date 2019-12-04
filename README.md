@@ -2,7 +2,7 @@
 
 ## Overview
 
-The backend engine for the Julia Package Butler. This is a low level package that most users will not directly use.
+The backend engine for the Julia Package Butler. This is a low level package that most users will not directly use. Most users will want to use the [`julia-pkgbutler` GitHub Action](https://github.com/davidanthoff/julia-pkgbutler).
 
 ## Functionality
 
