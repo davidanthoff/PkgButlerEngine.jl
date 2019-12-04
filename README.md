@@ -13,7 +13,7 @@ The Julia Package Butler currently makes the following changes to a package repo
 - It will add GitHub Action workflows for continuous integration. These workflows are automatically configured to only run on Julia versions that are compatible with the `compat` entry for Julia in the `Project.toml` file of the package.
 - If a `docs/make.jl` file exists, a GitHub Action workflow that builds and deploys documentation is added to the package.
 - If a `docs/Project.toml` file exists, the butler will ensure that the version bound on Documenter.jl is no lower than 0.24 (the first version to support building documentation with GitHub Actions).
-- Enable [CompatHelper.jl](https://github.com/search?q=CompatHelper.jl&ref=opensearch) for the repository.
+- Enable [CompatHelper.jl](https://github.com/bcbi/CompatHelper.jl) for the repository.
 - Enable [TagBot](https://github.com/JuliaRegistries/TagBot) for the repository.
 
 When the `bach` template is used, these additional channges are made:
