@@ -144,13 +144,15 @@ function construct_matrix_exclude_list(path)
             lines = split(option_value, ".", keepempty = false)
             lines = strip.(lines)
 
+            line_ending = Sys.iswindows() ? "\r\n" : "\n"
+
             if length(lines) == 0
                 return ""
             elseif length(lines) == 1
-                return " "^10 * "- " * lines[1]
+                return line_ending * " "^10 * "- " * lines[1]
             else
-                line_ending = Sys.iswindows() ? "\r\n" : "\n"
-                return " "^10 * "- " * lines[1] * line_ending * join(string.(" "^12, lines[2:end]), line_ending)
+
+                return line_ending * " "^10 * "- " * lines[1] * line_ending * join(string.(" "^12, lines[2:end]), line_ending)
             end
         end
     end
