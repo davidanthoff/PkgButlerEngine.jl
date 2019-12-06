@@ -153,7 +153,7 @@ function construct_matrix_exclude_list(path)
                 lines = split(ec, ",", keepempty=false)
                 lines = strip.(lines)
 
-                ret *= line_ending * " "^10 * "- " * lines[1] * length(lines) > 1 ? line_ending * join(string.(" "^12, lines[2:end]), line_ending) : ""
+                ret *= line_ending * " "^10 * "- " * lines[1] * ( length(lines) > 1 ? line_ending * join(string.(" "^12, lines[2:end]), line_ending) : "" )
             end
 
             return ret
