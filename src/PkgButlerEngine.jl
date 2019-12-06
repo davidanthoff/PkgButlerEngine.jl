@@ -141,19 +141,22 @@ function construct_matrix_exclude_list(path)
         if haskey(config_content, "strategy-matrix-exclude")
             option_value = config_content["strategy-matrix-exclude"]
 
-            lines = split(option_value, ".", keepempty = false)
-            lines = strip.(lines)
-
             line_ending = Sys.iswindows() ? "\r\n" : "\n"
 
-            if length(lines) == 0
-                return ""
-            elseif length(lines) == 1
-                return line_ending * " "^10 * "- " * lines[1]
-            else
+            exclude_configs = split(option_value, ";", keepempty = false)
+            exclude_configs = strip.(exclude_configs)
 
-                return line_ending * " "^10 * "- " * lines[1] * line_ending * join(string.(" "^12, lines[2:end]), line_ending)
+            ret = ""
+
+            for ec in exclude_configs
+
+                lines = split(ec, ",", keepempty = false)
+                lines = strip.(lines)
+
+                ret *= line_ending * " "^10 * "- " * lines[1] * length(lines) > 1 ? line_ending * join(string.(" "^12, lines[2:end]), line_ending) : ""
             end
+
+            return ret
         end
     end
 
