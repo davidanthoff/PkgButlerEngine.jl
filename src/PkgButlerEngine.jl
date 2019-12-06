@@ -132,6 +132,32 @@ function construct_version_matrix(path)
     return join(map(i->i[2], compat_versions), ", ")
 end
 
+function construct_matrix_exclude_list(path)
+    path_for_config_file = joinpath(path, ".jlpkgbutler.toml")
+
+    if isfile(path_for_config_file)
+        config_content = Pkg.TOML.parsefile(path_for_config_file)
+
+        if haskey(config_content, "strategy-matrix-exclude")
+            option_value = config_content["strategy-matrix-exclude"]
+            
+            lines = split(option_value, ".", keepempty=false)
+            lines = strip.(lines)
+
+            if length(lines)==0
+                return ""
+            elseif length(lines)==1
+                return " "^10 * "- " * lines[1]
+            else
+                line_ending = Sys.iswindows() ? "\r\n" : "\n"
+                return " "^10 * "- " * lines[1] * line_ending * join(string.(" "^12, lines[2:end]), line_ending)
+            end
+        end
+    end
+
+    return ""
+end
+
 function add_compathelper(path)
     path_for_butler_workflows_folder = joinpath(path, ".github", "workflows")
     path_for_compathelper_workflow = joinpath(path_for_butler_workflows_folder, "jlpkgbutler-compathelper-workflow.yml")
@@ -191,6 +217,8 @@ function update_pkg(path::AbstractString)
     if template == "bach"
         view_vals["include_codeformat_lint"] = "true"
     end
+    view_vals["ADDITIONAL_MATRIX_EXCLUDES"] = construct_matrix_exclude_list(path)
+    
 
     cp_with_mustache(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-ci-master-workflow.yml"), path_for_ci_master_workflow, view_vals)
     cp_with_mustache(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-ci-pr-workflow.yml"), path_for_ci_pr_workflow, view_vals)

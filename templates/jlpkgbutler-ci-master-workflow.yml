@@ -16,6 +16,7 @@ jobs:
         exclude:
           - os: macOS-latest
             julia-arch: x86
+$[[ADDITIONAL_MATRIX_EXCLUDES]]
 
     steps:
       - uses: actions/checkout@v1.0.0
