@@ -140,13 +140,13 @@ function construct_matrix_exclude_list(path)
 
         if haskey(config_content, "strategy-matrix-exclude")
             option_value = config_content["strategy-matrix-exclude"]
-            
-            lines = split(option_value, ".", keepempty=false)
+
+            lines = split(option_value, ".", keepempty = false)
             lines = strip.(lines)
 
-            if length(lines)==0
+            if length(lines) == 0
                 return ""
-            elseif length(lines)==1
+            elseif length(lines) == 1
                 return " "^10 * "- " * lines[1]
             else
                 line_ending = Sys.iswindows() ? "\r\n" : "\n"
@@ -218,7 +218,7 @@ function update_pkg(path::AbstractString)
         view_vals["include_codeformat_lint"] = "true"
     end
     view_vals["ADDITIONAL_MATRIX_EXCLUDES"] = construct_matrix_exclude_list(path)
-    
+
 
     cp_with_mustache(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-ci-master-workflow.yml"), path_for_ci_master_workflow, view_vals)
     cp_with_mustache(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-ci-pr-workflow.yml"), path_for_ci_pr_workflow, view_vals)
