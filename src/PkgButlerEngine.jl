@@ -141,7 +141,7 @@ function construct_matrix_exclude_list(path)
         if haskey(config_content, "strategy-matrix-exclude")
             option_value = config_content["strategy-matrix-exclude"]
             
-            lines = split(option_value, ".", keepempty=false)
+            lines = split(option_value, ",", keepempty=false)
             lines = strip.(lines)
 
             line_ending = Sys.iswindows() ? "\r\n" : "\n"
