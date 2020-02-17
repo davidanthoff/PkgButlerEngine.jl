@@ -143,14 +143,14 @@ function construct_matrix_exclude_list(path)
 
             line_ending = Sys.iswindows() ? "\r\n" : "\n"
             
-            exclude_configs = split(option_value, ";", keepempty=false)
+            exclude_configs = split(option_value, ";", keepempty = false)
             exclude_configs = strip.(exclude_configs)
-            
+
             ret = ""
 
             for ec in exclude_configs
 
-                lines = split(ec, ",", keepempty=false)
+                lines = split(ec, ",", keepempty = false)
                 lines = strip.(lines)
 
                 ret *= line_ending * " "^10 * "- " * lines[1] * ( length(lines) > 1 ? line_ending * join(string.(" "^12, lines[2:end]), line_ending) : "" )
@@ -223,7 +223,7 @@ function update_pkg(path::AbstractString)
         view_vals["include_codeformat_lint"] = "true"
     end
     view_vals["ADDITIONAL_MATRIX_EXCLUDES"] = construct_matrix_exclude_list(path)
-    
+
 
     cp_with_mustache(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-ci-master-workflow.yml"), path_for_ci_master_workflow, view_vals)
     cp_with_mustache(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-ci-pr-workflow.yml"), path_for_ci_pr_workflow, view_vals)
