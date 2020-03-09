@@ -219,9 +219,9 @@ function update_pkg(path::AbstractString)
 
     view_vals = Dict{String,Any}()
     view_vals["JL_VERSION_MATRIX"] = construct_version_matrix(path)
-    if template == "bach"
-        view_vals["include_codeformat_lint"] = "true"
-    end
+    # if template == "bach"
+    #     view_vals["include_codeformat_lint"] = "true"
+    # end
     view_vals["ADDITIONAL_MATRIX_EXCLUDES"] = construct_matrix_exclude_list(path)
 
 
