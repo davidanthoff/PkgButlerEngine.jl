@@ -36,6 +36,5 @@ $[[#include_codeformat_lint]]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: julia-actions/setup-julia@latest
       - uses: julia-actions/julia-codeformat-lint@releases/v1
 $[[/include_codeformat_lint]]
