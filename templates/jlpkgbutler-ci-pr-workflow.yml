@@ -37,6 +37,7 @@ jobs:
           flags: unittests
           name: codecov-umbrella
           fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
 $[[#include_codeformat_lint]]
   formatlint:
     runs-on: ubuntu-latest
