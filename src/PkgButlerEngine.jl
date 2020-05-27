@@ -3,6 +3,11 @@ module PkgButlerEngine
 import Mustache
 import Pkg
 
+# TODO Remove this horrible hack
+function Mustache.escape_html(x)
+    return String(x)
+end
+
 function configure_pkg(path::AbstractString; channel = :auto, template = :auto)
     channel in (:auto, :stable, :dev) || error("Invalid value for channel.")
     template in (:auto, :default, :bach) || error("Invalid value for template.")
