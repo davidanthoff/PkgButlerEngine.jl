@@ -12,5 +12,5 @@ jobs:
           ssh: ${{ secrets.JLPKGBUTLER_TOKEN }}
           branches: true
 $[[#include_custom_registry]]
-          registry: [$[[{JL_CUSTOM_REGISTRY}]]]
+          registry: $[[{JL_CUSTOM_REGISTRY}]]
 $[[/include_custom_registry]]
