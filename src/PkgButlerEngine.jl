@@ -163,6 +163,21 @@ function construct_matrix_exclude_list(path)
     return ""
 end
 
+function configure_tagbot!(path, view_vals)
+    path_for_config_file = joinpath(path, ".jlpkgbutler.toml")
+
+    if isfile(path_for_config_file)
+        config_content = Pkg.TOML.parsefile(path_for_config_file)
+
+        if haskey(config_content, "custom-registry")
+            option_value = config_content["custom-registry"]
+
+            view_vals["include_custom_registry"] = "true"
+            view_vals["JL_CUSTOM_REGISTRY"] = option_value
+        end
+    end    
+end
+
 function add_compathelper(path)
     path_for_butler_workflows_folder = joinpath(path, ".github", "workflows")
     path_for_compathelper_workflow = joinpath(path_for_butler_workflows_folder, "jlpkgbutler-compathelper-workflow.yml")
@@ -223,11 +238,12 @@ function update_pkg(path::AbstractString)
     #     view_vals["include_codeformat_lint"] = "true"
     # end
     view_vals["ADDITIONAL_MATRIX_EXCLUDES"] = construct_matrix_exclude_list(path)
+    configure_tagbot!(path, view_vals)
 
 
     cp_with_mustache(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-ci-master-workflow.yml"), path_for_ci_master_workflow, view_vals)
     cp_with_mustache(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-ci-pr-workflow.yml"), path_for_ci_pr_workflow, view_vals)
-    cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-tagbot-workflow.yml"), path_for_tagbot_workflow, force = true)
+    cp_with_mustache(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-tagbot-workflow.yml"), path_for_tagbot_workflow, view_vals)
 
     if isfile(path_for_docs_make_file)
         cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-docdeploy-workflow.yml"), path_for_docdeploy_workflow, force = true)
