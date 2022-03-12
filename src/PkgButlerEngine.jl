@@ -45,13 +45,13 @@ function configure_pkg(path::AbstractString; channel=:auto, template=:auto)
                     open(path_for_config_file, "w") do f
                         Pkg.TOML.print(f, config_content)
                     end
-                end
+            end
             elseif template !== :default
                 config_content["template"] = string(template)
 
                 open(path_for_config_file, "w") do f
                     Pkg.TOML.print(f, config_content)
-                end
+            end
             end
         elseif template !== :default
             open(path_for_config_file, "w") do f
@@ -79,11 +79,11 @@ function ensure_project_has_julia_compat(path)
         pkg_toml_content["compat"] = Dict{String,String}()
     end
 
-    if !haskey(pkg_toml_content["compat"], "julia")
+        if !haskey(pkg_toml_content["compat"], "julia")
         pkg_toml_content["compat"]["julia"] = "1"
 
         open(proj_file, "w") do f
-            Pkg.TOML.print(f, pkg_toml_content)
+Pkg.TOML.print(f, pkg_toml_content)
         end
     end
 end
@@ -137,7 +137,7 @@ function construct_matrix_exclude_list(path)
 
     if isfile(path_for_config_file)
         config_content = Pkg.TOML.parsefile(path_for_config_file)
-
+            
         if haskey(config_content, "strategy-matrix-exclude")
             option_value = config_content["strategy-matrix-exclude"]
 
