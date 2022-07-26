@@ -142,7 +142,7 @@ function construct_matrix_exclude_list(path)
             option_value = config_content["strategy-matrix-exclude"]
 
             line_ending = Sys.iswindows() ? "\r\n" : "\n"
-            
+
             exclude_configs = split(option_value, ";", keepempty=false)
             exclude_configs = strip.(exclude_configs)
 
@@ -153,7 +153,7 @@ function construct_matrix_exclude_list(path)
                 lines = split(ec, ",", keepempty=false)
                 lines = strip.(lines)
 
-                ret *= line_ending * " "^10 * "- " * lines[1] * ( length(lines) > 1 ? line_ending * join(string.(" "^12, lines[2:end]), line_ending) : "" )
+                ret *= line_ending * " "^10 * "- " * lines[1] * (length(lines) > 1 ? line_ending * join(string.(" "^12, lines[2:end]), line_ending) : "")
             end
 
             return ret
@@ -175,7 +175,7 @@ function configure_tagbot!(path, view_vals)
             view_vals["include_custom_registry"] = "true"
             view_vals["JL_CUSTOM_REGISTRY"] = option_value
         end
-    end    
+    end
 end
 
 function add_compathelper(path)
