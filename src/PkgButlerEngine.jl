@@ -247,7 +247,7 @@ function update_pkg(path::AbstractString)
 
     if isfile(path_for_docs_make_file)
         cp(joinpath(@__DIR__, "..", "templates", "jlpkgbutler-docdeploy-workflow.yml"), path_for_docdeploy_workflow, force=true)
-    else isfile(path_for_docdeploy_workflow)
+    elseif isfile(path_for_docdeploy_workflow)
         rm(path_for_docdeploy_workflow, force=true)
     end
 
