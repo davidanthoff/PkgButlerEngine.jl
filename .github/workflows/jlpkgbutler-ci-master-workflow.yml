@@ -18,6 +18,8 @@ jobs:
         exclude:
           - os: macos-13
             julia-arch: x86
+          - os: macos-13
+            julia-version: "1.4"
 
     steps:
       - uses: actions/checkout@v4
