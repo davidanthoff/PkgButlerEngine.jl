@@ -17,7 +17,9 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-13]
         exclude:
           - os: macos-13
-            julia-arch: x86$[[ADDITIONAL_MATRIX_EXCLUDES]]
+            julia-arch: x86
+          - os: macos-13
+            julia-version: "1.4"$[[ADDITIONAL_MATRIX_EXCLUDES]]
 
     steps:
       - uses: actions/checkout@v4
